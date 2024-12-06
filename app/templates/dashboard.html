@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Панель управления</h2>
+
+<h3>Отделы</h3>
+<ul class="list-group">
+{% for department in departments %}
+   <li class="list-group-item">{{ department.name }}</li>
+{% else %}
+   <li class="list-group-item">Нет доступных отделов.</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
