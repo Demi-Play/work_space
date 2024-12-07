@@ -17,6 +17,12 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+    
+    def is_admin(self):
+        return self.role_id == 1
+    
+    def is_moderator(self):
+        return self.role_id == 2  # Предполагается, что 2 - это ID роли модератора
 
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)

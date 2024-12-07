@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <title>Цифровое рабочее пространство</title>
+    <title>Панель модератора - Цифровое рабочее пространство</title>
 </head>
 
 <body class="{{ 'dark' if theme_value else 'light' }}"> <!-- Установка класса темы -->
@@ -18,17 +18,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('new_department') }}">Отдел</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('new_project') }}">Проекты</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('chat_list') }}">Чаты</a></li>
-                {% if current_user.is_authenticated and current_user.role_id == 1 %} {# роль 1 - это
-                администратор #}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.index') }}">Управление админа</a></li>
-                {% elif current_user.is_authenticated and current_user.role_id == 2 %} {# роль 2 - это
-                модератор, а 3 - пользователь #}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('moderator') }}">Модерация</a></li>
-                {% endif %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('settings') }}">Настройки</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('manage_departments') }}">Управление отделами</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('manage_projects') }}">Управление проектами</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('manage_chats') }}">Управление чатами</a></li>
             </ul>
             <ul class="navbar-nav ml-auto">
                 {% if current_user.is_authenticated %}

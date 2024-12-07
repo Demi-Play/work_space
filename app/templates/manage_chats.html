@@ -1,0 +1,57 @@
+{% extends "moder_base.html" %}
+
+
+{% block content %}
+<h2>Управление чатами</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.title.label }} {{ form.title() }}
+    </div>
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
+
+<h3>Существующие чаты</h3>
+<ul>
+{% for chat in chats %}
+    <li>
+        {{ chat.title }}
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#editModal{{ chat.id }}">Редактировать</button>
+
+        <form action="{{ url_for('delete_chat', id=chat.id) }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-danger">Удалить</button>
+        </form>
+
+         <!-- Модальное окно для редактирования -->
+         <div class="modal fade" id="editModal{{ chat.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ chat.id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="POST" action="{{ url_for('edit_chat', id=chat.id) }}">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel{{ chat.id }}">Редактировать чат</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {{ form.hidden_tag() }}
+                            <div class="form-group">
+                                {{ form.title.label }} {{ form.title(value=chat.title) }}  <!-- Предустановка значения -->
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+         </div>
+
+     </li>
+{% endfor %}
+</ul>
+{% endblock %}

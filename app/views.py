@@ -1,7 +1,7 @@
 from flask import render_template, redirect, request, url_for, flash
 from app import app, db
 from app.models import Setting, User, Department, Project, Message, Chat
-from app.forms import ChatForm, LoginForm, DepartmentForm, MessageForm, ProjectForm, RegistrationForm, UserSettingsForm
+from app.forms import ChatForm, LoginForm, DepartmentForm, MessageForm, ProjectForm, RegistrationForm, SettingForm, UserSettingsForm
 from flask_login import current_user, login_user, logout_user, login_required
 
 def get_theme_value():
@@ -281,3 +281,154 @@ def settings():
                            form=form,
                            notifications_value=(notifications_setting.value == 'true'), 
                            theme_value=get_theme_value())
+    
+    
+@app.route('/moderator')
+@login_required
+def moderator():
+    return render_template('moderator.html')
+    
+@app.route('/moderator/departments', methods=['GET', 'POST'])
+@login_required
+def manage_departments():
+    form = DepartmentForm()
+    if form.validate_on_submit():
+        department = Department(name=form.name.data)
+        db.session.add(department)
+        db.session.commit()
+        flash('Отдел успешно добавлен!')
+        return redirect(url_for('manage_departments'))
+    
+    departments = Department.query.all()
+    return render_template('manage_departments.html', form=form, departments=departments)
+
+@app.route('/moderator/departments/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_department(id):
+    department = Department.query.get_or_404(id)
+    form = DepartmentForm(obj=department)
+    if form.validate_on_submit():
+        department.name = form.name.data
+        db.session.commit()
+        flash('Отдел успешно обновлен!')
+        return redirect(url_for('manage_departments'))
+    
+    return render_template('edit_department.html', form=form)
+
+@app.route('/moderator/departments/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_department(id):
+    department = Department.query.get_or_404(id)
+    db.session.delete(department)
+    db.session.commit()
+    flash('Отдел успешно удален!')
+    return redirect(url_for('manage_departments'))
+
+@app.route('/moderator/projects', methods=['GET', 'POST'])
+@login_required
+def manage_projects():
+    form = ProjectForm()
+    if form.validate_on_submit():
+        project = Project(title=form.title.data)
+        db.session.add(project)
+        db.session.commit()
+        flash('Проект успешно добавлен!')
+        return redirect(url_for('manage_projects'))
+    
+    projects = Project.query.all()
+    return render_template('manage_projects.html', form=form, projects=projects)
+
+@app.route('/moderator/projects/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_project(id):
+    project = Project.query.get_or_404(id)
+    form = ProjectForm(obj=project)
+    if form.validate_on_submit():
+        project.title = form.title.data
+        db.session.commit()
+        flash('Проект успешно обновлен!')
+        return redirect(url_for('manage_projects'))
+    
+    return render_template('edit_project.html', form=form)
+
+@app.route('/moderator/projects/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_project(id):
+    project = Project.query.get_or_404(id)
+    db.session.delete(project)
+    db.session.commit()
+    flash('Проект успешно удален!')
+    return redirect(url_for('manage_projects'))
+
+@app.route('/moderator/chats', methods=['GET', 'POST'])
+@login_required
+def manage_chats():
+    form = ChatForm()
+    if form.validate_on_submit():
+        chat = Chat(name=form.title.data)
+        db.session.add(chat)
+        db.session.commit()
+        flash('Чат успешно добавлен!')
+        return redirect(url_for('manage_chats'))
+    
+    chats = Chat.query.all()
+    return render_template('manage_chats.html', form=form, chats=chats)
+
+@app.route('/moderator/chats/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_chat(id):
+    chat = Chat.query.get_or_404(id)
+    form = ChatForm(obj=chat)
+    if form.validate_on_submit():
+        chat.title = form.title.data
+        db.session.commit()
+        flash('Чат успешно обновлен!')
+        return redirect(url_for('manage_chats'))
+    
+    return render_template('edit_chat.html', form=form)
+
+@app.route('/moderator/chats/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_chat(id):
+    chat = Chat.query.get_or_404(id)
+    db.session.delete(chat)
+    db.session.commit()
+    flash('Чат успешно удален!')
+    return redirect(url_for('manage_chats'))
+
+@app.route('/moderator/settings', methods=['GET', 'POST'])
+@login_required
+def manage_settings():
+    form = SettingForm()
+    if form.validate_on_submit():
+        setting = Setting(key=form.key.data, value=form.value.data)
+        db.session.add(setting)
+        db.session.commit()
+        flash('Настройка успешно добавлена!')
+        return redirect(url_for('manage_settings'))
+    
+    settings = Setting.query.all()
+    return render_template('manage_settings.html', form=form, settings=settings)
+
+@app.route('/moderator/settings/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_setting(id):
+    setting = Setting.query.get_or_404(id)
+    form = SettingForm(obj=setting)
+    if form.validate_on_submit():
+        setting.key = form.key.data
+        setting.value = form.value.data
+        db.session.commit()
+        flash('Настройка успешно обновлена!')
+        return redirect(url_for('manage_settings'))
+    
+    return render_template('edit_setting.html', form=form)
+
+@app.route('/moderator/settings/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_setting(id):
+    setting = Setting.query.get_or_404(id)
+    db.session.delete(setting)
+    db.session.commit()
+    flash('Настройка успешно удалена!')
+    return redirect(url_for('manage_settings'))
