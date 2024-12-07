@@ -9,15 +9,15 @@
     {{ form.hidden_tag() }}
     <div class="form-group">
         {{ form.name.label(class='form-label') }}
-        {{ form.name(class='form-control bg-dark' if theme_value else 'form-control bg-light') }} <!-- Поле для имени пользователя -->
+        {{ form.name(class='form-control bg-dark text-light' if theme_value else 'form-control bg-light') }} <!-- Поле для имени пользователя -->
     </div>
     <div class="form-group">
         {{ form.email.label(class='form-label') }}
-        {{ form.email(class='form-control bg-dark' if theme_value else 'form-control bg-light') }} <!-- Поле для email -->
+        {{ form.email(class='form-control bg-dark text-light' if theme_value else 'form-control bg-light') }} <!-- Поле для email -->
     </div>
     <div class="form-group">
         {{ form.password.label(class='form-label') }}
-        {{ form.password(class='form-control bg-dark' if theme_value else 'form-control bg-light') }} <!-- Поле для нового пароля -->
+        {{ form.password(class='form-control bg-dark text-light' if theme_value else 'form-control bg-light') }} <!-- Поле для нового пароля -->
     </div>
     <button type="submit" class="btn btn-primary">Сохранить изменения</button>
 </form>

@@ -7,19 +7,19 @@
    {{ form.hidden_tag() }}
    <div class="form-group">
        {{ form.name.label(class='form-label') }}
-       {{ form.name(class='form-control') }}
+       {{ form.name(class='form-control bg-dark text-light' if theme_value else 'form-control bg-light') }}
    </div>
    <div class="form-group">
        {{ form.email.label(class='form-label') }}
-       {{ form.email(class='form-control') }}
+       {{ form.email(class='form-control bg-dark text-light' if theme_value else 'form-control bg-light') }}
    </div>
    <div class="form-group">
        {{ form.password.label(class='form-label') }} (оставьте пустым, чтобы не менять)
-       {{ form.password(class='form-control') }}
+       {{ form.password(class='form-control bg-dark text-light' if theme_value else 'form-control bg-light') }}
    </div>
    <div class="form-group">
        {{ form.department_id.label(class='form-label') }}
-       {{ form.department_id(class='form-control') }}
+       {{ form.department_id(class='form-control bg-dark text-light' if theme_value else 'form-control bg-light') }}
    </div>
    {{ form.submit(class='btn btn-primary') }}
 </form>

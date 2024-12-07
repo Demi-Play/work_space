@@ -5,11 +5,13 @@
 
 <ul class="list-group ">
 {% for chat in chats %}
+<a href="{{ url_for('chat', chat_id=chat.id) }}">
    <li class="list-group-item {{ 'bg-dark' if theme_value else 'bg-light' }}">
-       <a href="{{ url_for('chat', chat_id=chat.id) }}">{{ chat.title }}</a>
+       {{ chat.title }}
        <p>{{ chat.description }}</p>
        <small>Проект: {{ chat.project.title if chat.project else 'Нет' }}</small>
    </li>
+</a>
 {% else %}
    <li class="list-group-item {{ 'bg-dark' if theme_value else 'bg-light' }}">Нет доступных чатов.</li>
 {% endfor %}

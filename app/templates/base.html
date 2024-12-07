@@ -18,9 +18,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Главная</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('new_department') }}">Создать отдел</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('new_project') }}">Создать проект</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('new_department') }}">Отдел</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('new_project') }}">Проекты</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('chat_list') }}">Чаты</a></li>
                 {% if current_user.is_authenticated and current_user.role_id == 1 %} {# Предположим, что роль 1 - это
                 администратор #}

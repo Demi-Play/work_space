@@ -5,8 +5,10 @@ from app.forms import ChatForm, LoginForm, DepartmentForm, MessageForm, ProjectF
 from flask_login import current_user, login_user, logout_user, login_required
 
 def get_theme_value():
-    theme_setting = Setting.query.filter_by(user_id=current_user.id, key='theme').first()
-    return theme_setting.value == 'dark' if theme_setting else False
+    if current_user.is_authenticated:  # Проверяем, аутентифицирован ли пользователь
+        theme_setting = Setting.query.filter_by(user_id=current_user.id, key='theme').first()
+        return theme_setting.value == 'dark' if theme_setting else False
+    return False  # Если пользователь не аутентифицирован, возвращаем значение по умолчанию
 
 @app.route('/')
 def index():
