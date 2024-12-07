@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField
+from wtforms import BooleanField, StringField, PasswordField, SubmitField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Email
 
 class LoginForm(FlaskForm):
@@ -24,3 +24,19 @@ class ProjectForm(FlaskForm):
     description = TextAreaField('Описание')
     department_id = SelectField('Отдел', coerce=int)  # Заполнить позже в представлении
     submit = SubmitField('Создать проект')
+
+class ChatForm(FlaskForm):
+    title = StringField('Название чата', validators=[DataRequired()])
+    description = TextAreaField('Описание чата')
+    project_id = SelectField('Выберите проект', coerce=int)  # Добавляем выбор проекта
+    submit = SubmitField('Создать чат')
+
+class MessageForm(FlaskForm):
+    text = TextAreaField('Сообщение', validators=[DataRequired()])
+    submit = SubmitField('Отправить сообщение')
+
+class UserSettingsForm(FlaskForm):
+    name = StringField('Имя', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Новый пароль (оставьте пустым, если не хотите менять)')
+    submit = SubmitField('Сохранить настройки')

@@ -36,17 +36,24 @@ class Project(db.Model):
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+    chat_id = db.Column(db.Integer, db.ForeignKey('chat.id'))
 
 class Chat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     description = db.Column(db.Text)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+    messages = db.relationship('Message', backref='chat', lazy=True)
 
 class Setting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    key = db.Column(db.String(50), unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Связь с пользователем
+    key = db.Column(db.String(50), nullable=False)  # Убираем уникальность, чтобы один пользователь мог иметь несколько настроек
     value = db.Column(db.Text)
+
+    user = db.relationship('User', backref='settings')  # Обратная связь с пользователем
+
+

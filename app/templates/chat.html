@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ chat.title }}</h2>
+<p>{{ chat.description }}</p>
+
+<div class="jumbotron {{ 'dark' if theme_value else 'light' }}">
+    <div class="messages {{ 'dark' if theme_value else 'light' }}">
+        {% for message in messages %}
+        <div class="message {{ 'sent' if message.user_id == current_user.id else 'received' }}">
+            <span>{{ message.text }}</span>
+            <small>{{ message.timestamp.strftime('%H:%M') }}</small>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<h3>Отправить сообщение</h3>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="form-group ">
+        {{ form.text.label(class='form-label') }}
+        {{ form.text(class='form-control') }}
+    </div>
+    {{ form.submit(class='btn btn-primary') }}
+</form>
+
+{% endblock %}

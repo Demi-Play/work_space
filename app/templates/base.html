@@ -1,45 +1,89 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-  <title>Цифровое рабочее пространство</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Цифровое рабочее пространство</title>
 </head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="{{ url_for('dashboard') }}">Рабочее пространство</a>
-  <div class="collapse navbar-collapse">
-    <ul class="navbar-nav mr-auto">
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('new_department') }}">Создать отдел</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('new_project') }}">Создать проект</a></li>
-        {% if current_user.is_authenticated and current_user.role_id == 1 %} {# Предположим, что роль 1 - это администратор #}
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('users') }}">Управление пользователями</a></li>
+
+<body class="{{ 'dark' if theme_value else 'light' }}"> <!-- Установка класса темы -->
+    <nav class="navbar navbar-expand-lg {{ 'bg-dark text-light' if theme_value else 'bg-light navbar-light' }}">
+        <a class="navbar-brand" href="{{ url_for('index') }}">Рабочее пространство</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('new_department') }}">Создать отдел</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('new_project') }}">Создать проект</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('chat_list') }}">Чаты</a></li>
+                {% if current_user.is_authenticated and current_user.role_id == 1 %} {# Предположим, что роль 1 - это
+                администратор #}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('users') }}">Управление пользователями</a>
+                </li>
+                {% endif %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('settings') }}">Настройки</a></li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if current_user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Выйти ({{ current_user.name
+                        }})</a></li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}">Регистрация</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Войти</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
         {% endif %}
-    </ul>
-      <ul class="navbar-nav ml-auto">
-          {% if current_user.is_authenticated %}
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Выйти</a></li>
-          {% else %}
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}">Регистрация</a></li>
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Войти</a></li>
-          {% endif %}
-      </ul>
-  </div>
-</nav>
-<div class="container mt-4">
-  {% with messages=get_flashed_messages() %}
-      {% if messages %}
-          <div class="alert alert-info" role="alert">
-              {{ messages[0] }}
-          </div>
-      {% endif %}
-  {% endwith %}
-  {% block content %}{% endblock %}
-</div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        {% endwith %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script>
+        // Ваш JavaScript для переключения темы
+        document.addEventListener("DOMContentLoaded", function () {
+            const themeToggle = document.querySelector("#theme-toggle");
+
+            // Установка темы при загрузке страницы
+            const currentTheme = localStorage.getItem("theme") || "{{ 'light' if not theme_value else 'dark' }}";
+            document.body.classList.toggle("dark", currentTheme === "dark");
+
+            // Переключение темы
+            themeToggle.addEventListener("click", function () {
+                const newTheme = document.body.classList.toggle("dark") ? "dark" : "light";
+                localStorage.setItem("theme", newTheme);
+
+                // Отправка запроса на сервер для обновления настройки темы
+                fetch("/settings/theme", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ theme: newTheme })
+                });
+            });
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
