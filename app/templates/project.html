@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if current_user.role_id == 1 or current_user.role_id == 2 %}
+
 <h2>Создание нового проекта</h2>
 
 <form method="POST">
@@ -19,7 +21,7 @@
    </div>
    {{ form.submit(class='btn btn-primary') }}
 </form>
-
+{% endif %}
 <h3>Существующие проекты</h3>
 
 <ul class="list-group mt-3">

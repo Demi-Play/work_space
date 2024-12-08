@@ -53,6 +53,9 @@ class Chat(db.Model):
     description = db.Column(db.Text)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
     messages = db.relationship('Message', backref='chat', lazy=True)
+    
+    # Связь с моделью Project
+    project = db.relationship('Project', backref='chats')  # Добавьте эту строку
 
 class Setting(db.Model):
     id = db.Column(db.Integer, primary_key=True)

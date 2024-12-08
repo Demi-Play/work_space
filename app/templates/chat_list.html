@@ -17,6 +17,8 @@
 {% endfor %}
 </ul>
 
+{% if current_user.role_id == 1 or current_user.role_id == 2 %}
 <a href="{{ url_for('new_chat') }}" class="btn btn-primary mt-3">Создать новый чат</a>
+{% endif %}
 
 {% endblock %}
