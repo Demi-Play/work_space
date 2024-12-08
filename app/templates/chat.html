@@ -8,7 +8,7 @@
     <div class="messages ">
         {% for message in messages %}
         <div class="message {{ 'sent' if message.user_id == current_user.id else 'received' }}">
-            <span>{{ message.text }}</span>
+            <span>{{ message.sender_name }}: <strong>{{ message.text }}</strong></span>
             <small>{{ message.timestamp.strftime('%H:%M') }}</small>
         </div>
         {% endfor %}

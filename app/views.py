@@ -197,6 +197,9 @@ def chat(chat_id):
     # Получаем все сообщения для текущего чата
     messages = Message.query.filter_by(chat_id=chat.id).all()
     
+    for message in messages:
+        message.sender_name = User.query.get(message.user_id).name
+    
     return render_template('chat.html', chat=chat, messages=messages, form=form, theme_value=get_theme_value())
 
 @app.route('/settings/account', methods=['GET', 'POST'])
@@ -287,13 +290,14 @@ def settings():
 @login_required
 def moderator():
     return render_template('moderator.html')
-    
+
+# Управление отделами
 @app.route('/moderator/departments', methods=['GET', 'POST'])
 @login_required
 def manage_departments():
     form = DepartmentForm()
     if form.validate_on_submit():
-        department = Department(name=form.name.data)
+        department = Department(name=form.name.data, description=form.description.data)
         db.session.add(department)
         db.session.commit()
         flash('Отдел успешно добавлен!')
@@ -309,11 +313,12 @@ def edit_department(id):
     form = DepartmentForm(obj=department)
     if form.validate_on_submit():
         department.name = form.name.data
+        department.description = form.description.data
         db.session.commit()
         flash('Отдел успешно обновлен!')
         return redirect(url_for('manage_departments'))
     
-    return render_template('edit_department.html', form=form)
+    return render_template('manage_departments.html', form=form, departments=Department.query.all(), edit_id=id)
 
 @app.route('/moderator/departments/delete/<int:id>', methods=['POST'])
 @login_required
@@ -324,12 +329,15 @@ def delete_department(id):
     flash('Отдел успешно удален!')
     return redirect(url_for('manage_departments'))
 
+# Управление проектами
 @app.route('/moderator/projects', methods=['GET', 'POST'])
 @login_required
 def manage_projects():
     form = ProjectForm()
+    form.department_id.choices = [(p.id, p.name) for p in Department.query.all()]
+    
     if form.validate_on_submit():
-        project = Project(title=form.title.data)
+        project = Project(title=form.title.data, description=form.description.data, department_id=form.department_id.data)
         db.session.add(project)
         db.session.commit()
         flash('Проект успешно добавлен!')
@@ -343,13 +351,17 @@ def manage_projects():
 def edit_project(id):
     project = Project.query.get_or_404(id)
     form = ProjectForm(obj=project)
+    form.department_id.choices = [(p.id, p.name) for p in Department.query.all()]
+    
     if form.validate_on_submit():
         project.title = form.title.data
+        project.description = form.description.data
+        project.department_id = form.department_id.data
         db.session.commit()
         flash('Проект успешно обновлен!')
         return redirect(url_for('manage_projects'))
     
-    return render_template('edit_project.html', form=form)
+    return render_template('manage_projects.html', form=form, projects=Project.query.all(), edit_id=id)
 
 @app.route('/moderator/projects/delete/<int:id>', methods=['POST'])
 @login_required
@@ -360,12 +372,16 @@ def delete_project(id):
     flash('Проект успешно удален!')
     return redirect(url_for('manage_projects'))
 
+# Управление чатами
 @app.route('/moderator/chats', methods=['GET', 'POST'])
 @login_required
 def manage_chats():
     form = ChatForm()
+    form.project_id.choices = [(p.id, p.title) for p in Project.query.all()]
+
+    
     if form.validate_on_submit():
-        chat = Chat(name=form.title.data)
+        chat = Chat(title=form.title.data, description=form.description.data, project_id=form.project_id.data)
         db.session.add(chat)
         db.session.commit()
         flash('Чат успешно добавлен!')
@@ -379,13 +395,17 @@ def manage_chats():
 def edit_chat(id):
     chat = Chat.query.get_or_404(id)
     form = ChatForm(obj=chat)
+    form.project_id.choices = [(p.id, p.title) for p in Project.query.all()]
+    
     if form.validate_on_submit():
         chat.title = form.title.data
+        chat.description = form.description.data
+        chat.project_id = form.project_id.data
         db.session.commit()
         flash('Чат успешно обновлен!')
         return redirect(url_for('manage_chats'))
     
-    return render_template('edit_chat.html', form=form)
+    return render_template('manage_chats.html', form=form, chats=Chat.query.all(), edit_id=id)
 
 @app.route('/moderator/chats/delete/<int:id>', methods=['POST'])
 @login_required
